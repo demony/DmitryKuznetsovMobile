@@ -12,23 +12,26 @@ import java.util.concurrent.TimeUnit;
 
 public class BaseTest implements IDriver {
 
-    private static AppiumDriver appiumDriver; // singleton
-    IPageObject po;
+    private static AppiumDriver appiumDriver;
+    private static IPageObject pageObject;
 
     @Override
     public AppiumDriver getDriver() { return appiumDriver; }
 
-    public IPageObject getPo() {
-        return po;
+    public IPageObject getPageObject() {
+        return pageObject;
     }
 
-    @Parameters({"platformName","appType","deviceName","browserName","app"})
+    @Parameters({"platformName", "appType", "deviceName", "browserName", "app"})
     @BeforeSuite(alwaysRun = true)
-    public void setUp(String platformName, String appType, String deviceName, @Optional("") String browserName, @Optional("") String app) throws Exception {
-        System.out.println("Before: app type - "+appType);
+    public void setUp(@Optional("Android") String platformName,
+                      @Optional("native") String appType,
+                      @Optional("") String deviceName,
+                      @Optional("") String browserName,
+                      @Optional("") String app) throws Exception {
+        System.out.println("Before: app type - " + appType);
         setAppiumDriver(platformName, deviceName, browserName, app);
         setPageObject(appType, appiumDriver);
-
     }
 
     @AfterSuite(alwaysRun = true)
@@ -40,8 +43,8 @@ public class BaseTest implements IDriver {
     private void setAppiumDriver(String platformName, String deviceName, String browserName, String app){
         DesiredCapabilities capabilities = new DesiredCapabilities();
         //mandatory Android capabilities
-        capabilities.setCapability("platformName",platformName);
-        capabilities.setCapability("deviceName",deviceName);
+        capabilities.setCapability("platformName", platformName);
+        capabilities.setCapability("deviceName", deviceName);
 
         if(app.endsWith(".apk")) capabilities.setCapability("app", (new File(app)).getAbsolutePath());
 
@@ -54,14 +57,10 @@ public class BaseTest implements IDriver {
             e.printStackTrace();
         }
 
-        // Timeouts tuning
         appiumDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
     }
 
     private void setPageObject(String appType, AppiumDriver appiumDriver) throws Exception {
-        po = new PageObject(appType, appiumDriver);
+        pageObject = new PageObject(appType, appiumDriver);
     }
-
-
 }
