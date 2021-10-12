@@ -11,13 +11,13 @@ import setup.BaseTest;
 
 public class NativeMobileTests extends BaseTest {
 
-    @Test(groups = {"native"}, description = "This simple test just click on the Sign In button", enabled = true)
+    @Test(groups = {"native"}, description = "This simple test just click on the Sign In button", enabled = false)
     public void simpleNativeTest() throws IllegalAccessException, NoSuchFieldException, InstantiationException {
         getPageObject().getWebElement("signInButton").click();
         System.out.println("Simplest Android native test done");
     }
 
-    @Test(groups = {"native"}, description = "Work with new account test - create and login", enabled = false)
+    @Test(groups = {"native"}, description = "Work with new account test - create and login", enabled = true)
     public void newAccountTest() throws IllegalAccessException, NoSuchFieldException, InstantiationException {
         // User registration
         User newUser =  UserGenerator.getNewUser();

@@ -8,6 +8,10 @@
     <artifactId>KuznetsovDmitryMobile</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <token><!-- your token from epam cloud --></token>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.appium</groupId>
@@ -43,6 +47,8 @@
                     </suiteXmlFiles>
                     <systemPropertyVariables>
                         <ts.appium>http://localhost:4723/wd/hub</ts.appium>
+                        <td.appium.cloud>https://EPM-TSTF:%s@mobilecloud.epam.com/wd/hub</td.appium.cloud>
+                        <cloud.api.token>${token}</cloud.api.token>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -69,12 +75,48 @@
             </properties>
         </profile>
         <profile>
+            <id>native-cloud-android</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <suite.file>src/test/resources/nativeTNG-cloud-android.xml</suite.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>native-cloud-ios</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <suite.file>src/test/resources/nativeTNG-cloud-ios.xml</suite.file>
+            </properties>
+        </profile>
+        <profile>
             <id>web</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <suite.file>./src/test/resources/webTNG.xml</suite.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>web-cloud-android</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <suite.file>./src/test/resources/webTNG-cloud-android.xml</suite.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>web-cloud-ios</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <suite.file>./src/test/resources/webTNG.xml</suite.file>
+                <suite.file>./src/test/resources/webTNG-cloud-ios.xml</suite.file>
             </properties>
         </profile>
     </profiles>

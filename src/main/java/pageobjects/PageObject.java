@@ -1,11 +1,10 @@
-package pageObjects;
+package pageobjects;
 
 import io.appium.java_client.AppiumDriver;
+import java.lang.reflect.Field;
 import java.util.List;
 import org.openqa.selenium.WebElement;
 import setup.IPageObject;
-
-import java.lang.reflect.Field;
 
 public class PageObject implements IPageObject {
 
@@ -13,7 +12,7 @@ public class PageObject implements IPageObject {
 
     public PageObject(String appType, AppiumDriver appiumDriver) throws Exception {
         System.out.println("Current app type: " + appType);
-        switch(appType){
+        switch (appType) {
             case "web":
                 somePageObject = new WebPageObject(appiumDriver);
                 break;

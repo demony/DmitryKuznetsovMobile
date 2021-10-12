@@ -15,7 +15,7 @@ import setup.BaseTest;
 
 public class WebMobileTests extends BaseTest {
 
-    @Test(groups = {"web"}, description = "Make sure that we've opened IANA homepage", enabled = true)
+    @Test(groups = {"web"}, description = "Make sure that we've opened IANA homepage", enabled = false)
     public void simpleWebTest() throws InterruptedException {
         getDriver().get("http://iana.org"); // open IANA homepage
 
@@ -33,8 +33,11 @@ public class WebMobileTests extends BaseTest {
     }
 
     @Test(groups = {"web"}, description = "Check that google search is relevant",
-    dataProvider = "searchStringsForGoogle", dataProviderClass = WebDataProvider.class)
-    public void googleSearchTest(String searchCase, String searchText, String relevantText) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+        dataProvider = "searchStringsForGoogle", dataProviderClass = WebDataProvider.class, enabled = true)
+    public void googleSearchTest(String searchCase,
+                                 String searchText,
+                                 String relevantText)
+        throws NoSuchFieldException, IllegalAccessException, InstantiationException {
         getDriver().get("https://google.com");
         new WebDriverWait(getDriver(), 10).until(
             wd -> ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete")

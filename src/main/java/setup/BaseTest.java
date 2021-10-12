@@ -1,14 +1,22 @@
 package setup;
 
-import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.*;
-import pageObjects.PageObject;
+import static java.lang.String.format;
 
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import pageobjects.PageObject;
 
 public class BaseTest implements IDriver {
 
@@ -16,48 +24,77 @@ public class BaseTest implements IDriver {
     private static IPageObject pageObject;
 
     @Override
-    public AppiumDriver getDriver() { return appiumDriver; }
+    public AppiumDriver getDriver() {
+        return appiumDriver;
+    }
 
     public IPageObject getPageObject() {
         return pageObject;
     }
 
-    @Parameters({"platformName", "appType", "deviceName", "browserName", "app"})
+    @Parameters({"useCloud", "platformName", "appType", "deviceName", "udid",
+        "browserName", "app", "appPackage", "appActivity", "bundleId"})
     @BeforeSuite(alwaysRun = true)
-    public void setUp(@Optional("Android") String platformName,
-                      @Optional("native") String appType,
-                      @Optional("") String deviceName,
-                      @Optional("") String browserName,
-                      @Optional("") String app) throws Exception {
-        System.out.println("Before: app type - " + appType);
-        setAppiumDriver(platformName, deviceName, browserName, app);
+    public void setUp(
+        @Optional("") Boolean useCloud,
+        @Optional("") String platformName,
+        @Optional("") String appType,
+        @Optional("") String deviceName,
+        @Optional("") String udid,
+        @Optional("") String browserName,
+        @Optional("") String app,
+        @Optional("") String appPackage,
+        @Optional("") String appActivity,
+        @Optional("") String bundleId
+    ) throws Exception {
+        System.out.println("Before: app type - " + appType + " useCloud: " + useCloud);
+        setAppiumDriver(useCloud, platformName, deviceName, udid, browserName, app, appPackage, appActivity, bundleId);
         setPageObject(appType, appiumDriver);
     }
 
+    @Parameters({"useCloud"})
     @AfterSuite(alwaysRun = true)
-    public void tearDown() throws Exception {
+    public void tearDown(Boolean useCloud) throws Exception {
         System.out.println("After");
-        appiumDriver.closeApp();
+        if (useCloud) {
+            // After tests the device will be in preparing status,
+            // it prevents tests from errors on cloud side
+            appiumDriver.quit();
+        } else {
+            appiumDriver.closeApp();
+        }
     }
 
-    private void setAppiumDriver(String platformName, String deviceName, String browserName, String app){
+    private void setAppiumDriver(Boolean useCloud, String platformName, String deviceName, String udid,
+                                 String browserName, String app, String appPackage, String appActivity,
+                                 String bundleId) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        //mandatory Android capabilities
-        capabilities.setCapability("platformName", platformName);
-        capabilities.setCapability("deviceName", deviceName);
-
-        if(app.endsWith(".apk")) capabilities.setCapability("app", (new File(app)).getAbsolutePath());
-
-        capabilities.setCapability("browserName", browserName);
-        capabilities.setCapability("chromedriverDisableBuildCheck","true");
-
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, platformName);
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+        capabilities.setCapability(MobileCapabilityType.UDID, udid);
+        if (app.endsWith(".apk")) {
+            capabilities.setCapability(MobileCapabilityType.APP, (new File(app)).getAbsolutePath());
+        }
+        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
+        capabilities.setCapability(MobileCapabilityType.OVERLAPPING_CHECK_DISABLED, "true");
+        capabilities.setCapability("appPackage", appPackage);
+        capabilities.setCapability("appActivity", appActivity);
+        capabilities.setCapability("bundleId", bundleId);
         try {
-            appiumDriver = new AppiumDriver(new URL(System.getProperty("ts.appium")), capabilities);
-        } catch (MalformedURLException e) {
+            appiumDriver = new AppiumDriver(getAppiumUrl(useCloud), capabilities);
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
         appiumDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    private URL getAppiumUrl(Boolean useCloud) throws UnsupportedEncodingException, MalformedURLException {
+        if (useCloud) {
+            String cloudKey = URLEncoder.encode(System.getProperty("cloud.api.token"), StandardCharsets.UTF_8.name());
+            return new URL(format(System.getProperty("td.appium.cloud"), cloudKey));
+        } else {
+            return new URL(System.getProperty("ts.appium"));
+        }
     }
 
     private void setPageObject(String appType, AppiumDriver appiumDriver) throws Exception {

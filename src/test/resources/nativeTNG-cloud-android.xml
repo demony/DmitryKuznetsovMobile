@@ -1,11 +1,10 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Native mobile testing Suite">
-    <parameter name="useCloud" value="false" />
+<suite name="Native mobile cloud testing Suite for Android">
+    <parameter name="useCloud" value="true" />
     <parameter name="appType" value="native" />
-    <parameter name="deviceName" value="emulator-5554" />
+    <parameter name="udid" value="" />
     <parameter name="platformName" value="Android" />
-    <parameter name="app" value="./src/main/resources/EPAMTestApp.apk" />
-    <test name="Native tests">
+    <test name="Native cloud tests for Android">
         <groups>
             <run>
                 <include name="native"/>
