@@ -17,11 +17,13 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import pageobjects.PageObject;
+import utils.TestProperties;
 
 public class BaseTest implements IDriver {
 
     private static AppiumDriver appiumDriver;
     private static IPageObject pageObject;
+    public TestProperties testProperties;
 
     @Override
     public AppiumDriver getDriver() {
@@ -47,6 +49,7 @@ public class BaseTest implements IDriver {
         @Optional("") String appActivity,
         @Optional("") String bundleId
     ) throws Exception {
+        testProperties = new TestProperties();
         System.out.println("Before: app type - " + appType + " useCloud: " + useCloud);
         setAppiumDriver(useCloud, platformName, deviceName, udid, browserName, app, appPackage, appActivity, bundleId);
         setPageObject(appType, appiumDriver);

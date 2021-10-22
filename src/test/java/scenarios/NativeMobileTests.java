@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import dto.User;
 import dto.UserGenerator;
-import java.util.List;
-import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 import setup.BaseTest;
 
 public class NativeMobileTests extends BaseTest {
 
-    @Test(groups = {"native"}, description = "This simple test just click on the Sign In button", enabled = false)
+    @Test(groups = {"native"}, description = "This simple test just click on the Sign In button", enabled = true)
     public void simpleNativeTest() throws IllegalAccessException, NoSuchFieldException, InstantiationException {
         getPageObject().getWebElement("signInButton").click();
         System.out.println("Simplest Android native test done");
@@ -20,7 +18,8 @@ public class NativeMobileTests extends BaseTest {
     @Test(groups = {"native"}, description = "Work with new account test - create and login", enabled = true)
     public void newAccountTest() throws IllegalAccessException, NoSuchFieldException, InstantiationException {
         // User registration
-        User newUser =  UserGenerator.getNewUser();
+        User newUser =  UserGenerator.getNewUser(
+            testProperties.getUserName(), testProperties.getUserEmail(), testProperties.getUserPassword());
         getPageObject().getWebElement("registerButton").click();
         getPageObject().getWebElement("newUserEmailInput")
                        .sendKeys(newUser.getEmail());
@@ -45,5 +44,4 @@ public class NativeMobileTests extends BaseTest {
             .isNotEmpty();
         System.out.println("Simplest Android native test done");
     }
-
 }

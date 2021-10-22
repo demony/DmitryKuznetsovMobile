@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <token><!-- your token from epam cloud --></token>
+        <token><!-- your token here --></token>
     </properties>
 
     <dependencies>

@@ -1,12 +1,12 @@
 package dto;
 
 public class UserGenerator {
-    public static User getNewUser() {
+    public static User getNewUser(String name, String email, String passwd) {
         return User
             .builder()
-            .name("Robert")
-            .email("sapolsky@localhost.lo")
-            .password("12345678aaa")
+            .name(name)
+            .email(email)
+            .password(passwd)
             .build();
     }
 }
